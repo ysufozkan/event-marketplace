@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "776841154366",
+    "project_id": "eventmarketplace-da08d",
+    "storage_bucket": "eventmarketplace-da08d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776841154366:android:426dafd8eb2f07ebd2266f",
+        "android_client_info": {
+          "package_name": "com.eventmarketplace.event_marketplace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ7I2fJQtjg20PcPigDGjRAy99RERqKYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
