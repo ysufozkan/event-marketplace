@@ -33,7 +33,7 @@ class RegistrationModel {
     return RegistrationModel(
       id: id,
       userId: map['userId'] ?? '',
-      userName: map['userName'] ?? 'Kullanıcı',
+      userName: map['userName'] ?? 'User',
       eventId: map['eventId'] ?? '',
       eventTitle: map['eventTitle'] ?? '',
       eventLocation: map['eventLocation'] ?? '',

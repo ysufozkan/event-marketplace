@@ -34,7 +34,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
   bool _isLoading = false;
 
   static const _categories = [
-    'Teknoloji', 'Müzik', 'Spor', 'Sanat', 'Yemek',
+    'Technology', 'Music', 'Sports', 'Art', 'Food',
   ];
 
   @override
@@ -78,6 +78,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
   }
 
   Future<void> _pickDate() async {
+    final primary = Theme.of(context).colorScheme.primary;
     final date = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -85,7 +86,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: AppColors.primary)),
+            colorScheme: ColorScheme.light(primary: primary)),
         child: child!,
       ),
     );
@@ -95,7 +96,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
       initialTime: TimeOfDay.fromDateTime(_selectedDate),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: AppColors.primary)),
+            colorScheme: ColorScheme.light(primary: primary)),
         child: child!,
       ),
     );
@@ -130,7 +131,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Etkinlik güncellendi!'),
+          content: Text('Event updated!'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
@@ -140,7 +141,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hata: $e'),
+          content: Text('Error: $e'),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -152,9 +153,11 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Etkinliği Düzenle'),
+        title: const Text('Edit Event'),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
@@ -176,10 +179,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   height: 180,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.05),
+                    color: primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.3)),
+                        color: primary.withValues(alpha: 0.3)),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(14),
@@ -193,11 +196,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                             imageUrl: _existingImageUrl!,
                             fit: BoxFit.cover,
                             placeholder: (_, __) => Container(
-                                color: AppColors.primary
-                                    .withValues(alpha: 0.08)),
-                            errorWidget: (_, __, ___) => const Icon(
+                                color: primary.withValues(alpha: 0.08)),
+                            errorWidget: (_, __, ___) => Icon(
                                 Icons.image_outlined,
-                                color: AppColors.primary),
+                                color: primary),
                           )
                         else
                           Column(
@@ -205,12 +207,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                             children: [
                               Icon(Icons.add_photo_alternate_outlined,
                                   size: 48,
-                                  color: AppColors.primary
-                                      .withValues(alpha: 0.5)),
+                                  color: primary.withValues(alpha: 0.5)),
                               const SizedBox(height: 8),
-                              const Text('Fotoğraf Ekle',
-                                  style:
-                                      TextStyle(color: AppColors.primary)),
+                              Text('Add Photo',
+                                  style: TextStyle(color: primary)),
                             ],
                           ),
                         Positioned(
@@ -229,7 +229,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                 Icon(Icons.edit_rounded,
                                     size: 14, color: Colors.white),
                                 SizedBox(width: 4),
-                                Text('Değiştir',
+                                Text('Change',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 12)),
                               ],
@@ -243,28 +243,28 @@ class _EditEventScreenState extends State<EditEventScreen> {
               ),
               const SizedBox(height: 20),
 
-              const _Label('Etkinlik Adı'),
+              const _Label('Event Name'),
               TextFormField(
                 controller: _titleController,
-                validator: (v) => Validators.required(v, 'Etkinlik adı'),
+                validator: (v) => Validators.required(v, 'Event name'),
                 decoration:
-                    const InputDecoration(hintText: 'Etkinlik adı'),
+                    const InputDecoration(hintText: 'Event name'),
               ),
               const SizedBox(height: 16),
 
-              const _Label('Açıklama'),
+              const _Label('Description'),
               TextFormField(
                 controller: _descController,
                 maxLines: 4,
-                validator: (v) => Validators.required(v, 'Açıklama'),
+                validator: (v) => Validators.required(v, 'Description'),
                 decoration: const InputDecoration(
-                  hintText: 'Etkinlik hakkında bilgi...',
+                  hintText: 'Information about the event...',
                   alignLabelWithHint: true,
                 ),
               ),
               const SizedBox(height: 16),
 
-              const _Label('Kategori'),
+              const _Label('Category'),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: const InputDecoration(),
@@ -275,17 +275,17 @@ class _EditEventScreenState extends State<EditEventScreen> {
               ),
               const SizedBox(height: 16),
 
-              const _Label('Konum'),
+              const _Label('Location'),
               TextFormField(
                 controller: _locationController,
-                validator: (v) => Validators.required(v, 'Konum'),
+                validator: (v) => Validators.required(v, 'Location'),
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.location_on_outlined),
                 ),
               ),
               const SizedBox(height: 16),
 
-              const _Label('Tarih ve Saat'),
+              const _Label('Date & Time'),
               GestureDetector(
                 onTap: _pickDate,
                 child: Container(
@@ -302,7 +302,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                           color: AppColors.textSecondary, size: 20),
                       const SizedBox(width: 12),
                       Text(
-                        DateFormat('d MMMM yyyy, HH:mm', 'tr_TR')
+                        DateFormat('d MMMM yyyy, HH:mm', 'en_US')
                             .format(_selectedDate),
                         style: const TextStyle(
                             fontSize: 14, color: AppColors.textPrimary),
@@ -322,7 +322,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _Label('Ücret (₺)'),
+                        const _Label('Price (₺)'),
                         TextFormField(
                           controller: _priceController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -342,7 +342,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _Label('Kapasite'),
+                        const _Label('Capacity'),
                         TextFormField(
                           controller: _capacityController,
                           keyboardType: TextInputType.number,
@@ -351,16 +351,16 @@ class _EditEventScreenState extends State<EditEventScreen> {
                           ],
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Gerekli';
+                              return 'Required';
                             }
                             if (int.tryParse(v) == null ||
                                 int.parse(v) < 1) {
-                              return 'Geçersiz';
+                              return 'Invalid';
                             }
                             return null;
                           },
                           decoration: const InputDecoration(
-                              hintText: '100', suffixText: 'kişi'),
+                              hintText: '100', suffixText: 'people'),
                         ),
                       ],
                     ),
@@ -378,7 +378,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2),
                       )
-                    : const Text('Güncelle'),
+                    : const Text('Update'),
               ),
               const SizedBox(height: 24),
             ],

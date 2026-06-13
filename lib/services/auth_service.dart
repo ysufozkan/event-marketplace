@@ -76,19 +76,19 @@ class AuthService {
   String getErrorMessage(String code) {
     switch (code) {
       case 'user-not-found':
-        return 'Bu email ile kayıtlı kullanıcı bulunamadı';
+        return 'No user found with this email';
       case 'wrong-password':
-        return 'Şifre hatalı';
+        return 'Incorrect password';
       case 'email-already-in-use':
-        return 'Bu email zaten kullanımda';
+        return 'This email is already in use';
       case 'weak-password':
-        return 'Şifre çok zayıf';
+        return 'Password is too weak';
       case 'invalid-email':
-        return 'Geçersiz email adresi';
+        return 'Invalid email address';
       case 'invalid-credential':
-        return 'Email veya şifre hatalı';
+        return 'Incorrect email or password';
       default:
-        return 'Bir hata oluştu, tekrar deneyin';
+        return 'An error occurred, please try again';
     }
   }
 }

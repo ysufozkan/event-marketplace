@@ -6,8 +6,6 @@ import '../models/event_model.dart';
 
 class EventService {
   final _db = FirebaseFirestore.instance;
-  // Lazy getter — Storage yalnızca uploadImage çağrıldığında init edilir,
-  // böylece Windows'ta Firestore ile C++ SDK çakışması önlenir.
   FirebaseStorage get _storage => FirebaseStorage.instance;
 
   Stream<List<EventModel>> getEvents({String? category}) {
@@ -19,7 +17,7 @@ class EventService {
       var events = snap.docs
           .map((d) => EventModel.fromMap(d.data(), d.id))
           .toList();
-      if (category != null && category != 'Tümü') {
+      if (category != null) {
         events = events.where((e) => e.category == category).toList();
       }
       events.sort((a, b) => a.date.compareTo(b.date));
@@ -65,13 +63,13 @@ class EventService {
     final now = DateTime.now();
     final events = [
       {
-        'title': 'Yapay Zeka ve Gelecek Semineri',
-        'description': 'Yapay zekanın günlük hayatımıza ve kariyer fırsatlarına etkilerini uzman konuşmacılarla keşfedin. Öğrenci ve akademisyenlere açık interaktif bir etkinlik.',
-        'category': 'Teknoloji',
+        'title': 'AI & The Future Seminar',
+        'description': 'Explore the impact of artificial intelligence on daily life and career opportunities with expert speakers. An interactive event open to students and academics.',
+        'category': 'Technology',
         'organizerId': 'seed',
-        'organizerName': 'Bilgisayar Topluluğu',
+        'organizerName': 'Computer Science Society',
         'imageUrl': 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800',
-        'location': 'Üniversite Konferans Salonu A',
+        'location': 'University Conference Hall A',
         'date': Timestamp.fromDate(now.add(const Duration(days: 5))),
         'price': 0.0,
         'capacity': 150,
@@ -80,13 +78,13 @@ class EventService {
         'createdAt': Timestamp.fromDate(now),
       },
       {
-        'title': 'Akustik Gece — Canlı Müzik',
-        'description': 'Üniversitenin en yetenekli müzisyenlerinin sahne alacağı unutulmaz bir akustik performans gecesi. Hafif içecekler dahildir.',
-        'category': 'Müzik',
+        'title': 'Acoustic Night — Live Music',
+        'description': "An unforgettable acoustic performance night featuring the university's most talented musicians. Light refreshments included.",
+        'category': 'Music',
         'organizerId': 'seed',
-        'organizerName': 'Müzik Kulübü',
+        'organizerName': 'Music Club',
         'imageUrl': 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
-        'location': 'Kampüs Açık Amfi',
+        'location': 'Campus Open Amphitheater',
         'date': Timestamp.fromDate(now.add(const Duration(days: 8))),
         'price': 25.0,
         'capacity': 200,
@@ -95,13 +93,13 @@ class EventService {
         'createdAt': Timestamp.fromDate(now),
       },
       {
-        'title': 'Flutter ile Mobil Uygulama Geliştirme',
-        'description': 'Sıfırdan başlayarak Flutter ile kendi uygulamanızı geliştirin. Pratik workshop formatında, dizüstü bilgisayarınızı getirmeniz yeterli.',
-        'category': 'Teknoloji',
+        'title': 'Mobile App Development with Flutter',
+        'description': 'Build your own app with Flutter from scratch. Hands-on workshop format — just bring your laptop.',
+        'category': 'Technology',
         'organizerId': 'seed',
-        'organizerName': 'Yazılım Geliştirme Kulübü',
+        'organizerName': 'Software Development Club',
         'imageUrl': 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800',
-        'location': 'Mühendislik Binası Lab 3',
+        'location': 'Engineering Building Lab 3',
         'date': Timestamp.fromDate(now.add(const Duration(days: 12))),
         'price': 0.0,
         'capacity': 40,
@@ -110,13 +108,13 @@ class EventService {
         'createdAt': Timestamp.fromDate(now),
       },
       {
-        'title': 'Bahar Spor Şenliği',
-        'description': 'Futbol, basketbol, voleybol ve daha fazlası! Takımını oluştur, kaydol ve şampiyonluk kupası için mücadele et.',
-        'category': 'Spor',
+        'title': 'Spring Sports Festival',
+        'description': 'Soccer, basketball, volleyball and more! Form your team, register, and compete for the championship trophy.',
+        'category': 'Sports',
         'organizerId': 'seed',
-        'organizerName': 'Spor Koordinatörlüğü',
+        'organizerName': 'Sports Coordination Office',
         'imageUrl': 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800',
-        'location': 'Üniversite Spor Kompleksi',
+        'location': 'University Sports Complex',
         'date': Timestamp.fromDate(now.add(const Duration(days: 15))),
         'price': 10.0,
         'capacity': 300,
@@ -125,13 +123,13 @@ class EventService {
         'createdAt': Timestamp.fromDate(now),
       },
       {
-        'title': 'Modern Sanat Sergisi — Genç Sanatçılar',
-        'description': 'Üniversiteli genç sanatçıların özgün eserlerinin sergilendiği sanat galerisi etkinliği. Resim, heykel ve dijital sanat bir arada.',
-        'category': 'Sanat',
+        'title': 'Modern Art Exhibition — Young Artists',
+        'description': 'An art gallery event showcasing original works by young university artists. Painting, sculpture and digital art all in one place.',
+        'category': 'Art',
         'organizerId': 'seed',
-        'organizerName': 'Güzel Sanatlar Topluluğu',
+        'organizerName': 'Fine Arts Society',
         'imageUrl': 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
-        'location': 'Kültür Merkezi Galeri',
+        'location': 'Cultural Center Gallery',
         'date': Timestamp.fromDate(now.add(const Duration(days: 3))),
         'price': 0.0,
         'capacity': 100,
@@ -140,13 +138,13 @@ class EventService {
         'createdAt': Timestamp.fromDate(now),
       },
       {
-        'title': 'Dünya Mutfakları Festivali',
-        'description': 'Farklı ülkelerden öğrencilerin kendi kültürlerinin yemeklerini sunduğu lezzet festivali. Tadım biletleri sınırlıdır!',
-        'category': 'Yemek',
+        'title': 'World Cuisines Festival',
+        'description': 'A food festival where students from different countries present dishes from their own cultures. Tasting tickets are limited!',
+        'category': 'Food',
         'organizerId': 'seed',
-        'organizerName': 'Uluslararası Öğrenci Topluluğu',
+        'organizerName': 'International Students Society',
         'imageUrl': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
-        'location': 'Merkez Kafeterya',
+        'location': 'Central Cafeteria',
         'date': Timestamp.fromDate(now.add(const Duration(days: 20))),
         'price': 35.0,
         'capacity': 250,

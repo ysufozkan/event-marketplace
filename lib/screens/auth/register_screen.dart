@@ -55,6 +55,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -69,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Hesap Oluştur',
+                'Create Account',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -78,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Etkinlikleri keşfetmeye başla',
+                'Start discovering events',
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColors.textSecondary,
@@ -95,7 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: Validators.name,
                       textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
-                        labelText: 'Ad Soyad',
+                        labelText: 'Full Name',
                         prefixIcon: Icon(Icons.person_outlined),
                       ),
                     ),
@@ -115,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscureText: _obscurePassword,
                       validator: Validators.password,
                       decoration: InputDecoration(
-                        labelText: 'Şifre',
+                        labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outlined),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -130,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 24),
                     const Text(
-                      'Hesap Türü',
+                      'Account Type',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -141,19 +143,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Row(
                       children: [
                         _RoleCard(
-                          label: 'Katılımcı',
+                          label: 'Attendee',
                           icon: Icons.person_rounded,
-                          description: 'Etkinliklere katıl',
+                          description: 'Attend events',
                           selected: _selectedRole == 'attendee',
+                          roleColor: AppColors.attendeePrimary,
                           onTap: () =>
                               setState(() => _selectedRole = 'attendee'),
                         ),
                         const SizedBox(width: 12),
                         _RoleCard(
-                          label: 'Organizatör',
+                          label: 'Organizer',
                           icon: Icons.business_center_rounded,
-                          description: 'Etkinlik oluştur',
+                          description: 'Create events',
                           selected: _selectedRole == 'organizer',
+                          roleColor: AppColors.organizerPrimary,
                           onTap: () =>
                               setState(() => _selectedRole = 'organizer'),
                         ),
@@ -171,22 +175,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text('Kayıt Ol'),
+                          : const Text('Sign Up'),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Zaten hesabın var mı? ',
+                          'Already have an account? ',
                           style: TextStyle(color: AppColors.textSecondary),
                         ),
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: const Text(
-                            'Giriş Yap',
+                          child: Text(
+                            'Sign In',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -209,6 +213,7 @@ class _RoleCard extends StatelessWidget {
   final IconData icon;
   final String description;
   final bool selected;
+  final Color roleColor;
   final VoidCallback onTap;
 
   const _RoleCard({
@@ -216,6 +221,7 @@ class _RoleCard extends StatelessWidget {
     required this.icon,
     required this.description,
     required this.selected,
+    required this.roleColor,
     required this.onTap,
   });
 
@@ -229,11 +235,11 @@ class _RoleCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: selected
-                ? AppColors.primary.withValues(alpha: 0.08)
+                ? roleColor.withValues(alpha: 0.08)
                 : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppColors.primary : const Color(0xFFE5E7EB),
+              color: selected ? roleColor : const Color(0xFFE5E7EB),
               width: selected ? 2 : 1,
             ),
           ),
@@ -241,7 +247,7 @@ class _RoleCard extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: selected ? AppColors.primary : AppColors.textSecondary,
+                color: selected ? roleColor : AppColors.textSecondary,
                 size: 28,
               ),
               const SizedBox(height: 8),
@@ -249,8 +255,7 @@ class _RoleCard extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color:
-                      selected ? AppColors.primary : AppColors.textPrimary,
+                  color: selected ? roleColor : AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),

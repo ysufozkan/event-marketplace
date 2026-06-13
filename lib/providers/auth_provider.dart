@@ -100,7 +100,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (_) {
-      _error = 'Profil güncellenemedi';
+      _error = 'Failed to update profile';
       notifyListeners();
       return false;
     }

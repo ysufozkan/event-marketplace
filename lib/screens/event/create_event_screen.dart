@@ -26,30 +26,30 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _capacityController = TextEditingController();
   final _eventService = EventService();
 
-  String _selectedCategory = 'Teknoloji';
+  String _selectedCategory = 'Technology';
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 7));
   XFile? _imageFile;
   Uint8List? _imageBytes;
   bool _isLoading = false;
 
   static const _categories = [
-    'Teknoloji',
-    'Müzik',
-    'Spor',
-    'Sanat',
-    'Yemek',
+    'Technology',
+    'Music',
+    'Sports',
+    'Art',
+    'Food',
   ];
 
   static const _defaultImages = {
-    'Teknoloji':
+    'Technology':
         'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800',
-    'Müzik':
+    'Music':
         'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
-    'Spor':
+    'Sports':
         'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800',
-    'Sanat':
+    'Art':
         'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
-    'Yemek':
+    'Food':
         'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
   };
 
@@ -76,6 +76,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
 
   Future<void> _pickDate() async {
+    final primary = Theme.of(context).colorScheme.primary;
     final date = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -83,8 +84,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme:
-              ColorScheme.light(primary: AppColors.primary),
+          colorScheme: ColorScheme.light(primary: primary),
         ),
         child: child!,
       ),
@@ -96,8 +96,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       initialTime: TimeOfDay.fromDateTime(_selectedDate),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme:
-              ColorScheme.light(primary: AppColors.primary),
+          colorScheme: ColorScheme.light(primary: primary),
         ),
         child: child!,
       ),
@@ -150,7 +149,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Etkinlik başarıyla oluşturuldu!'),
+          content: Text('Event created successfully!'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
@@ -160,7 +159,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hata: $e'),
+          content: Text('Error: $e'),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -172,9 +171,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Etkinlik Oluştur'),
+        title: const Text('Create Event'),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
@@ -196,10 +197,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   height: 180,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.05),
+                    color: primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
+                      color: primary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: _imageBytes != null
@@ -227,7 +228,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                     Icon(Icons.edit_rounded,
                                         size: 14, color: Colors.white),
                                     SizedBox(width: 4),
-                                    Text('Değiştir',
+                                    Text('Change',
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 12)),
@@ -242,20 +243,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           children: [
                             Icon(Icons.add_photo_alternate_outlined,
                                 size: 48,
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.5)),
+                                color: primary.withValues(alpha: 0.5)),
                             const SizedBox(height: 8),
                             Text(
-                              'Fotoğraf Ekle (isteğe bağlı)',
+                              'Add Photo (optional)',
                               style: TextStyle(
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.7),
+                                color: primary.withValues(alpha: 0.7),
                                 fontSize: 14,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Seçilmezse kategori görseli kullanılır',
+                              'Category image will be used if not selected',
                               style: TextStyle(
                                 color: AppColors.textSecondary
                                     .withValues(alpha: 0.7),
@@ -268,30 +267,30 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               const SizedBox(height: 20),
 
-              const _Label('Etkinlik Adı'),
+              const _Label('Event Name'),
               TextFormField(
                 controller: _titleController,
                 textCapitalization: TextCapitalization.sentences,
-                validator: (v) => Validators.required(v, 'Etkinlik adı'),
+                validator: (v) => Validators.required(v, 'Event name'),
                 decoration: const InputDecoration(
-                    hintText: 'Örn: Flutter Workshop 2025'),
+                    hintText: 'e.g. Flutter Workshop 2025'),
               ),
               const SizedBox(height: 16),
 
-              const _Label('Açıklama'),
+              const _Label('Description'),
               TextFormField(
                 controller: _descController,
                 maxLines: 4,
                 textCapitalization: TextCapitalization.sentences,
-                validator: (v) => Validators.required(v, 'Açıklama'),
+                validator: (v) => Validators.required(v, 'Description'),
                 decoration: const InputDecoration(
-                  hintText: 'Etkinlik hakkında detaylı bilgi...',
+                  hintText: 'Detailed information about the event...',
                   alignLabelWithHint: true,
                 ),
               ),
               const SizedBox(height: 16),
 
-              const _Label('Kategori'),
+              const _Label('Category'),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: const InputDecoration(),
@@ -302,18 +301,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               const SizedBox(height: 16),
 
-              const _Label('Konum'),
+              const _Label('Location'),
               TextFormField(
                 controller: _locationController,
-                validator: (v) => Validators.required(v, 'Konum'),
+                validator: (v) => Validators.required(v, 'Location'),
                 decoration: const InputDecoration(
-                  hintText: 'Örn: Mühendislik Binası A-101',
+                  hintText: 'e.g. Engineering Building A-101',
                   prefixIcon: Icon(Icons.location_on_outlined),
                 ),
               ),
               const SizedBox(height: 16),
 
-              const _Label('Tarih ve Saat'),
+              const _Label('Date & Time'),
               GestureDetector(
                 onTap: _pickDate,
                 child: Container(
@@ -331,7 +330,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           color: AppColors.textSecondary, size: 20),
                       const SizedBox(width: 12),
                       Text(
-                        DateFormat('d MMMM yyyy, HH:mm', 'tr_TR')
+                        DateFormat('d MMMM yyyy, HH:mm', 'en_US')
                             .format(_selectedDate),
                         style: const TextStyle(
                             fontSize: 14, color: AppColors.textPrimary),
@@ -351,7 +350,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _Label('Ücret (₺)'),
+                        const _Label('Price (₺)'),
                         TextFormField(
                           controller: _priceController,
                           keyboardType:
@@ -374,7 +373,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _Label('Kapasite'),
+                        const _Label('Capacity'),
                         TextFormField(
                           controller: _capacityController,
                           keyboardType: TextInputType.number,
@@ -383,17 +382,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           ],
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Kapasite gerekli';
+                              return 'Capacity is required';
                             }
                             final n = int.tryParse(v);
                             if (n == null || n < 1) {
-                              return 'Geçersiz sayı';
+                              return 'Invalid number';
                             }
                             return null;
                           },
                           decoration: const InputDecoration(
                             hintText: '100',
-                            suffixText: 'kişi',
+                            suffixText: 'people',
                           ),
                         ),
                       ],
@@ -412,7 +411,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2),
                       )
-                    : const Text('Etkinlik Oluştur'),
+                    : const Text('Create Event'),
               ),
               const SizedBox(height: 24),
             ],

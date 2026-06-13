@@ -51,6 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -64,29 +66,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.event_available_rounded,
-                      color: AppColors.primary,
+                      color: primary,
                       size: 28,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
+                  Text(
                     'EventHub',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: primary,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 48),
               const Text(
-                'Tekrar Hoşgeldin!',
+                'Welcome Back!',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -95,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Hesabına giriş yap',
+                'Sign in to your account',
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColors.textSecondary,
@@ -121,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: _obscurePassword,
                       validator: Validators.password,
                       decoration: InputDecoration(
-                        labelText: 'Şifre',
+                        labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outlined),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -146,23 +148,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text('Giriş Yap'),
+                          : const Text('Sign In'),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Hesabın yok mu? ',
+                          "Don't have an account? ",
                           style: TextStyle(color: AppColors.textSecondary),
                         ),
                         GestureDetector(
                           onTap: () =>
                               Navigator.pushNamed(context, '/register'),
-                          child: const Text(
-                            'Kayıt Ol',
+                          child: Text(
+                            'Sign Up',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

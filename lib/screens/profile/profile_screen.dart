@@ -43,11 +43,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final auth = context.read<AuthProvider>();
     final controller = TextEditingController(text: auth.user?.name ?? '');
     final formKey = GlobalKey<FormState>();
+    final primary = Theme.of(context).colorScheme.primary;
 
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Ad Soyadı Güncelle'),
+        title: const Text('Update Name'),
         content: Form(
           key: formKey,
           child: TextFormField(
@@ -55,11 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             autofocus: true,
             textCapitalization: TextCapitalization.words,
             decoration: InputDecoration(
-              labelText: 'Ad Soyad',
+              labelText: 'Full Name',
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
             validator: (v) {
-              if (v == null || v.trim().length < 2) return 'Geçerli bir isim girin';
+              if (v == null || v.trim().length < 2) return 'Enter a valid name';
               return null;
             },
           ),
@@ -67,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('İptal'),
+            child: const Text('Cancel'),
           ),
           FilledButton(
             onPressed: () {
@@ -75,8 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.pop(ctx, controller.text.trim());
               }
             },
-            style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('Kaydet'),
+            style: FilledButton.styleFrom(backgroundColor: primary),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -91,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(ok ? 'Profil güncellendi' : 'Güncelleme başarısız'),
+          content: Text(ok ? 'Profile updated' : 'Update failed'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -102,17 +103,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Çıkış Yap'),
-        content: const Text('Hesabından çıkış yapmak istediğinden emin misin?'),
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('İptal'),
+            child: const Text('Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Çıkış Yap'),
+            child: const Text('Sign Out'),
           ),
         ],
       ),
@@ -127,6 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final user = auth.user;
+    final primary = Theme.of(context).colorScheme.primary;
     if (user == null) return const SizedBox();
 
     return Scaffold(
@@ -145,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Profilim',
+                        'My Profile',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -160,13 +162,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
                           child: CircleAvatar(
                             radius: 48,
-                            backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                            backgroundColor: primary.withValues(alpha: 0.12),
                             child: _uploadingAvatar
-                                ? const SizedBox(
+                                ? SizedBox(
                                     width: 32,
                                     height: 32,
                                     child: CircularProgressIndicator(
-                                      color: AppColors.primary,
+                                      color: primary,
                                       strokeWidth: 2.5,
                                     ),
                                   )
@@ -193,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(
-                                color: AppColors.primary,
+                                color: primary,
                                 shape: BoxShape.circle,
                                 border: Border.all(color: Colors.white, width: 2),
                               ),
@@ -225,10 +227,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(width: 8),
                         GestureDetector(
                           onTap: _editName,
-                          child: const Icon(
+                          child: Icon(
                             Icons.edit_rounded,
                             size: 18,
-                            color: AppColors.primary,
+                            color: primary,
                           ),
                         ),
                       ],
@@ -257,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Hesap Bilgileri',
+                      'Account Details',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -267,19 +269,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     _InfoRow(
                       icon: Icons.calendar_month_outlined,
-                      label: 'Üyelik Tarihi',
-                      value: DateFormat('d MMMM yyyy', 'tr_TR').format(user.createdAt),
+                      label: 'Member Since',
+                      value: DateFormat('d MMMM yyyy', 'en_US').format(user.createdAt),
                     ),
                     const Divider(height: 24),
                     _InfoRow(
                       icon: Icons.email_outlined,
-                      label: 'E-posta',
+                      label: 'Email',
                       value: user.email,
                     ),
                     const Divider(height: 24),
                     _InfoRow(
                       icon: Icons.badge_outlined,
-                      label: 'Hesap Türü',
+                      label: 'Account Type',
                       value: _roleLabel(user.role),
                     ),
                   ],
@@ -302,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: _confirmLogout,
                     icon: const Icon(Icons.logout_rounded, color: AppColors.error),
                     label: const Text(
-                      'Çıkış Yap',
+                      'Sign Out',
                       style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -327,11 +329,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _roleLabel(String role) {
     switch (role) {
       case 'organizer':
-        return 'Organizatör';
+        return 'Organizer';
       case 'staff':
-        return 'Personel';
+        return 'Staff';
       default:
-        return 'Katılımcı';
+        return 'Attendee';
     }
   }
 }
@@ -350,10 +352,10 @@ class _AvatarInitials extends StatelessWidget {
             : '?';
     return Text(
       initials,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        color: AppColors.primary,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -366,9 +368,9 @@ class _RoleBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, label, icon) = switch (role) {
-      'organizer' => (AppColors.primary, 'Organizatör', Icons.manage_accounts_rounded),
-      'staff' => (AppColors.error, 'Personel', Icons.security_rounded),
-      _ => (AppColors.success, 'Katılımcı', Icons.person_rounded),
+      'organizer' => (AppColors.organizerPrimary, 'Organizer', Icons.manage_accounts_rounded),
+      'staff' => (AppColors.staffPrimary, 'Staff', Icons.security_rounded),
+      _ => (AppColors.attendeePrimary, 'Attendee', Icons.person_rounded),
     };
 
     return Container(
@@ -410,16 +412,18 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Row(
       children: [
         Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: primary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, size: 18, color: AppColors.primary),
+          child: Icon(icon, size: 18, color: primary),
         ),
         const SizedBox(width: 14),
         Column(
@@ -466,6 +470,8 @@ class _TicketStatsState extends State<_TicketStats> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return StreamBuilder<List<RegistrationModel>>(
       stream: _stream,
       builder: (context, snapshot) {
@@ -482,7 +488,7 @@ class _TicketStatsState extends State<_TicketStats> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'İstatistikler',
+                'Statistics',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -496,8 +502,8 @@ class _TicketStatsState extends State<_TicketStats> {
                     child: _StatCard(
                       icon: Icons.confirmation_number_rounded,
                       value: '$total',
-                      label: 'Toplam Bilet',
-                      color: AppColors.primary,
+                      label: 'Total Tickets',
+                      color: primary,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -505,7 +511,7 @@ class _TicketStatsState extends State<_TicketStats> {
                     child: _StatCard(
                       icon: Icons.event_available_rounded,
                       value: '$active',
-                      label: 'Aktif Bilet',
+                      label: 'Active Tickets',
                       color: AppColors.success,
                     ),
                   ),

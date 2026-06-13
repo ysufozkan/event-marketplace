@@ -22,11 +22,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _eventService = EventService();
   final _searchController = TextEditingController();
-  String _selectedCategory = 'Tümü';
+  String _selectedCategory = 'All';
   String _searchQuery = '';
   int _currentTab = 0;
 
-  final _categories = ['Tümü', 'Teknoloji', 'Müzik', 'Spor', 'Sanat', 'Yemek'];
+  final _categories = ['All', 'Technology', 'Music', 'Sports', 'Art', 'Food'];
 
   @override
   void initState() {
@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
@@ -56,15 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               icon: const Icon(Icons.add_rounded),
-              label: const Text('Etkinlik Oluştur'),
-              backgroundColor: AppColors.primary,
+              label: const Text('Create Event'),
+              backgroundColor: primary,
               foregroundColor: Colors.white,
             )
           : null,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentTab.clamp(0, auth.isOrganizer ? 3 : 2),
+        currentIndex: _currentTab.clamp(0, 2),
         onTap: (i) => setState(() => _currentTab = i),
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: primary,
         unselectedItemColor: AppColors.textSecondary,
         backgroundColor: Colors.white,
         elevation: 12,
@@ -73,33 +74,34 @@ class _HomeScreenState extends State<HomeScreen> {
           const BottomNavigationBarItem(
             icon: Icon(Icons.explore_outlined),
             activeIcon: Icon(Icons.explore_rounded),
-            label: 'Keşfet',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number_outlined),
-            activeIcon: Icon(Icons.confirmation_number_rounded),
-            label: 'Biletlerim',
+            label: 'Explore',
           ),
           if (auth.isOrganizer)
             const BottomNavigationBarItem(
               icon: Icon(Icons.event_note_outlined),
               activeIcon: Icon(Icons.event_note_rounded),
-              label: 'Etkinliklerim',
+              label: 'My Events',
+            )
+          else
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.confirmation_number_outlined),
+              activeIcon: Icon(Icons.confirmation_number_rounded),
+              label: 'My Tickets',
             ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
             activeIcon: Icon(Icons.person_rounded),
-            label: 'Profil',
+            label: 'Profile',
           ),
         ],
       ),
-      body: _currentTab == 1
-          ? const MyTicketsScreen()
-          : (_currentTab == 2 && auth.isOrganizer)
-              ? ManageEventsScreen(organizer: auth.user!)
-              : (_currentTab == (auth.isOrganizer ? 3 : 2))
-                  ? const ProfileScreen()
-                  : Column(
+      body: _currentTab == 2
+          ? const ProfileScreen()
+          : _currentTab == 1
+              ? (auth.isOrganizer
+                  ? ManageEventsScreen(organizer: auth.user!)
+                  : const MyTicketsScreen())
+              : Column(
         children: [
           _AppHeader(
             userName: auth.user?.name.split(' ').first ?? '',
@@ -146,6 +148,8 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -165,20 +169,20 @@ class _AppHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.event_available_rounded,
-                      color: AppColors.primary, size: 26),
+                  Icon(Icons.event_available_rounded,
+                      color: primary, size: 26),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'EventHub',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: primary,
                     ),
                   ),
                   const Spacer(),
                   Text(
-                    'Merhaba, $userName',
+                    'Hello, $userName',
                     style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
@@ -206,7 +210,7 @@ class _AppHeader extends StatelessWidget {
                 controller: searchController,
                 onChanged: onSearch,
                 decoration: InputDecoration(
-                  hintText: 'Etkinlik ara...',
+                  hintText: 'Search events...',
                   hintStyle: const TextStyle(
                       fontSize: 14, color: AppColors.textSecondary),
                   prefixIcon: const Icon(Icons.search_rounded,
@@ -224,8 +228,7 @@ class _AppHeader extends StatelessWidget {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        const BorderSide(color: AppColors.primary, width: 1.5),
+                    borderSide: BorderSide(color: primary, width: 1.5),
                   ),
                 ),
               ),
@@ -250,6 +253,8 @@ class _CategoryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
@@ -269,11 +274,11 @@ class _CategoryBar extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : Colors.transparent,
+                  color: isSelected ? primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
                     color: isSelected
-                        ? AppColors.primary
+                        ? primary
                         : const Color(0xFFD1D5DB),
                   ),
                 ),
@@ -317,7 +322,7 @@ class _EventGridState extends State<_EventGrid> {
   void initState() {
     super.initState();
     _stream = widget.eventService.getEvents(
-      category: widget.category == 'Tümü' ? null : widget.category,
+      category: widget.category == 'All' ? null : widget.category,
     );
   }
 
@@ -326,19 +331,21 @@ class _EventGridState extends State<_EventGrid> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.category != widget.category) {
       _stream = widget.eventService.getEvents(
-        category: widget.category == 'Tümü' ? null : widget.category,
+        category: widget.category == 'All' ? null : widget.category,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return StreamBuilder<List<EventModel>>(
       stream: _stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          return Center(
+            child: CircularProgressIndicator(color: primary),
           );
         }
 
@@ -360,7 +367,7 @@ class _EventGridState extends State<_EventGrid> {
                 Icon(Icons.event_busy_rounded,
                     size: 56, color: AppColors.textSecondary),
                 SizedBox(height: 12),
-                Text('Etkinlik bulunamadı',
+                Text('No events found',
                     style: TextStyle(
                         color: AppColors.textSecondary, fontSize: 15)),
               ],
@@ -398,7 +405,8 @@ class _EventCardState extends State<_EventCard> {
   @override
   Widget build(BuildContext context) {
     final e = widget.event;
-    final dateStr = DateFormat('d MMM, HH:mm', 'tr_TR').format(e.date);
+    final primary = Theme.of(context).colorScheme.primary;
+    final dateStr = DateFormat('d MMM, HH:mm', 'en_US').format(e.date);
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -440,17 +448,17 @@ class _EventCardState extends State<_EventCard> {
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
                       height: 90,
-                      color: AppColors.primary.withValues(alpha: 0.08),
-                      child: const Center(
+                      color: primary.withValues(alpha: 0.08),
+                      child: Center(
                         child: CircularProgressIndicator(
-                            color: AppColors.primary, strokeWidth: 2),
+                            color: primary, strokeWidth: 2),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
                       height: 90,
-                      color: AppColors.primary.withValues(alpha: 0.08),
-                      child: const Icon(Icons.image_outlined,
-                          color: AppColors.primary, size: 36),
+                      color: primary.withValues(alpha: 0.08),
+                      child: Icon(Icons.image_outlined,
+                          color: primary, size: 36),
                     ),
                   ),
                   Positioned(
@@ -460,12 +468,12 @@ class _EventCardState extends State<_EventCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: e.isFree ? AppColors.success : AppColors.primary,
+                        color: e.isFree ? AppColors.success : primary,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         e.isFree
-                            ? 'Ücretsiz'
+                            ? 'Free'
                             : '₺${e.price.toStringAsFixed(0)}',
                         style: const TextStyle(
                           color: Colors.white,
@@ -571,29 +579,28 @@ class _CategoryBadge extends StatelessWidget {
   final String category;
   const _CategoryBadge({required this.category});
 
-  Color get _color {
-    switch (category) {
-      case 'Teknoloji': return const Color(0xFF3B82F6);
-      case 'Müzik': return const Color(0xFFEC4899);
-      case 'Spor': return const Color(0xFF10B981);
-      case 'Sanat': return const Color(0xFFF59E0B);
-      case 'Yemek': return const Color(0xFFEF4444);
-      default: return AppColors.primary;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final color = switch (category) {
+      'Technology' => const Color(0xFF0D9488),
+      'Music' => const Color(0xFFEC4899),
+      'Sports' => const Color(0xFF16A34A),
+      'Art' => const Color(0xFFF59E0B),
+      'Food' => const Color(0xFFEF4444),
+      _ => primary,
+    };
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: _color.withValues(alpha: 0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         category,
         style: TextStyle(
-          color: _color,
+          color: color,
           fontSize: 10,
           fontWeight: FontWeight.w600,
         ),

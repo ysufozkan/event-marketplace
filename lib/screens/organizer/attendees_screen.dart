@@ -12,10 +12,11 @@ class AttendeesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = RegistrationService();
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Katılımcılar'),
+        title: const Text('Attendees'),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
@@ -48,7 +49,7 @@ class AttendeesScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        DateFormat('d MMMM yyyy, HH:mm', 'tr_TR')
+                        DateFormat('d MMMM yyyy, HH:mm', 'en_US')
                             .format(event.date),
                         style: const TextStyle(
                           fontSize: 13,
@@ -62,13 +63,13 @@ class AttendeesScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     '${event.registeredCount}/${event.capacity}',
-                    style: const TextStyle(
-                      color: AppColors.primary,
+                    style: TextStyle(
+                      color: primary,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),
@@ -82,9 +83,8 @@ class AttendeesScreen extends StatelessWidget {
               stream: service.getEventRegistrations(event.id),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                        color: AppColors.primary),
+                  return Center(
+                    child: CircularProgressIndicator(color: primary),
                   );
                 }
 
@@ -103,7 +103,7 @@ class AttendeesScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         const Text(
-                          'Henüz katılımcı yok',
+                          'No attendees yet',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -139,13 +139,13 @@ class AttendeesScreen extends StatelessWidget {
                           CircleAvatar(
                             radius: 20,
                             backgroundColor:
-                                AppColors.primary.withValues(alpha: 0.1),
+                                primary.withValues(alpha: 0.1),
                             child: Text(
                               a.userName.isNotEmpty
                                   ? a.userName[0].toUpperCase()
                                   : '?',
-                              style: const TextStyle(
-                                color: AppColors.primary,
+                              style: TextStyle(
+                                color: primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -164,7 +164,7 @@ class AttendeesScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  'Kayıt: ${DateFormat('d MMM, HH:mm', 'tr_TR').format(a.purchasedAt)}',
+                                  'Registered: ${DateFormat('d MMM, HH:mm', 'en_US').format(a.purchasedAt)}',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.textSecondary,
@@ -182,10 +182,10 @@ class AttendeesScreen extends StatelessWidget {
                             ),
                             child: Text(
                               a.ticketCode,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
+                                color: primary,
                                 letterSpacing: 1,
                               ),
                             ),

@@ -61,6 +61,7 @@ class _TicketValidatorScreenState extends State<TicketValidatorScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = context.read<AuthProvider>();
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       body: Column(
@@ -70,8 +71,8 @@ class _TicketValidatorScreenState extends State<TicketValidatorScreen> {
             width: double.infinity,
             padding: EdgeInsets.fromLTRB(
                 24, MediaQuery.of(context).padding.top + 24, 24, 32),
-            decoration: const BoxDecoration(
-              color: AppColors.primary,
+            decoration: BoxDecoration(
+              color: primary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,14 +100,14 @@ class _TicketValidatorScreenState extends State<TicketValidatorScreen> {
                       },
                       icon: const Icon(Icons.logout_rounded,
                           color: Colors.white70, size: 18),
-                      label: const Text('Çıkış',
+                      label: const Text('Sign Out',
                           style: TextStyle(color: Colors.white70)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Bilet Kontrolü',
+                  'Ticket Validation',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -115,7 +116,7 @@ class _TicketValidatorScreenState extends State<TicketValidatorScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Katılımcının bilet kodunu girin',
+                  "Enter the attendee's ticket code",
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 15,
@@ -173,8 +174,7 @@ class _TicketValidatorScreenState extends State<TicketValidatorScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                            color: AppColors.primary, width: 2),
+                        borderSide: BorderSide(color: primary, width: 2),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
@@ -202,7 +202,7 @@ class _TicketValidatorScreenState extends State<TicketValidatorScreen> {
                                   color: Colors.white, strokeWidth: 2),
                             )
                           : const Text(
-                              'KONTROL ET',
+                              'VALIDATE',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -272,7 +272,7 @@ class _ValidResult extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'GEÇERLİ BİLET',
+            'VALID TICKET',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -283,35 +283,35 @@ class _ValidResult extends StatelessWidget {
           const SizedBox(height: 20),
           _InfoRow(
               icon: Icons.person_rounded,
-              label: 'Katılımcı',
+              label: 'Attendee',
               value: r.userName),
           const SizedBox(height: 10),
           _InfoRow(
               icon: Icons.event_rounded,
-              label: 'Etkinlik',
+              label: 'Event',
               value: r.eventTitle),
           const SizedBox(height: 10),
           _InfoRow(
             icon: Icons.calendar_today_rounded,
-            label: 'Tarih',
-            value: DateFormat('d MMMM yyyy, HH:mm', 'tr_TR')
+            label: 'Date',
+            value: DateFormat('d MMMM yyyy, HH:mm', 'en_US')
                 .format(r.eventDate),
           ),
           const SizedBox(height: 10),
           _InfoRow(
               icon: Icons.location_on_rounded,
-              label: 'Konum',
+              label: 'Location',
               value: r.eventLocation),
           const SizedBox(height: 10),
           _InfoRow(
               icon: Icons.confirmation_number_rounded,
-              label: 'Bilet Kodu',
+              label: 'Ticket Code',
               value: r.ticketCode),
           const SizedBox(height: 24),
           TextButton.icon(
             onPressed: onReset,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Yeni Kontrol'),
+            label: const Text('New Validation'),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.success,
               textStyle: const TextStyle(fontWeight: FontWeight.w600),
@@ -351,7 +351,7 @@ class _InvalidResult extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'GEÇERSİZ BİLET',
+            'INVALID TICKET',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -361,7 +361,7 @@ class _InvalidResult extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Bu bilet kodu sistemde bulunamadı\nveya iptal edilmiş.',
+            'This ticket code was not found\nor has been cancelled.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -373,7 +373,7 @@ class _InvalidResult extends StatelessWidget {
           TextButton.icon(
             onPressed: onReset,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Tekrar Dene'),
+            label: const Text('Try Again'),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
               textStyle: const TextStyle(fontWeight: FontWeight.w600),

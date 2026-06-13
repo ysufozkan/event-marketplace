@@ -15,6 +15,7 @@ class ManageEventsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = EventService();
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
@@ -25,7 +26,7 @@ class ManageEventsScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
               child: Text(
-                'Etkinliklerim',
+                'My Events',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -36,7 +37,7 @@ class ManageEventsScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: Text(
-                'Oluşturduğun etkinlikleri yönet',
+                'Manage your created events',
                 style:
                     TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
@@ -46,9 +47,8 @@ class ManageEventsScreen extends StatelessWidget {
                 stream: service.getEventsByOrganizer(organizer.uid),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                          color: AppColors.primary),
+                    return Center(
+                      child: CircularProgressIndicator(color: primary),
                     );
                   }
 
@@ -67,7 +67,7 @@ class ManageEventsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           const Text(
-                            'Henüz etkinlik oluşturmadın',
+                            "You haven't created any events yet",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -76,7 +76,7 @@ class ManageEventsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Keşfet sekmesindeki + butonunu kullan',
+                            'Use the + button on the Explore tab',
                             style: TextStyle(
                               fontSize: 13,
                               color: AppColors.textSecondary,
@@ -114,19 +114,19 @@ class _EventManageCard extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Etkinliği Pasife Al'),
+        title: const Text('Deactivate Event'),
         content: Text(
-            '"${event.title}" etkinliğini pasife almak istediğine emin misin? Yeni kayıt yapılamaz.'),
+            'Are you sure you want to deactivate "${event.title}"? No new registrations will be allowed.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('İptal'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style:
                 TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Pasife Al'),
+            child: const Text('Deactivate'),
           ),
         ],
       ),
@@ -137,7 +137,7 @@ class _EventManageCard extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Etkinlik pasife alındı'),
+            content: Text('Event deactivated'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -147,8 +147,9 @@ class _EventManageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     final dateStr =
-        DateFormat('d MMM yyyy, HH:mm', 'tr_TR').format(event.date);
+        DateFormat('d MMM yyyy, HH:mm', 'en_US').format(event.date);
     final capacityPct = event.capacity > 0
         ? event.registeredCount / event.capacity
         : 0.0;
@@ -184,13 +185,13 @@ class _EventManageCard extends StatelessWidget {
                       event.isActive ? null : BlendMode.darken,
                   placeholder: (_, __) => Container(
                     height: 120,
-                    color: AppColors.primary.withValues(alpha: 0.08),
+                    color: primary.withValues(alpha: 0.08),
                   ),
                   errorWidget: (_, __, ___) => Container(
                     height: 120,
-                    color: AppColors.primary.withValues(alpha: 0.08),
-                    child: const Icon(Icons.image_outlined,
-                        color: AppColors.primary, size: 36),
+                    color: primary.withValues(alpha: 0.08),
+                    child: Icon(Icons.image_outlined,
+                        color: primary, size: 36),
                   ),
                 ),
               ),
@@ -206,7 +207,7 @@ class _EventManageCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
-                      'Pasif',
+                      'Inactive',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 11,
@@ -260,7 +261,7 @@ class _EventManageCard extends StatelessWidget {
                     minHeight: 5,
                     backgroundColor: const Color(0xFFE5E7EB),
                     valueColor: AlwaysStoppedAnimation(
-                      event.isFull ? AppColors.error : AppColors.primary,
+                      event.isFull ? AppColors.error : primary,
                     ),
                   ),
                 ),
@@ -271,8 +272,8 @@ class _EventManageCard extends StatelessWidget {
                   children: [
                     _ActionButton(
                       icon: Icons.people_rounded,
-                      label: 'Katılımcılar',
-                      color: AppColors.primary,
+                      label: 'Attendees',
+                      color: primary,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -283,8 +284,8 @@ class _EventManageCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     _ActionButton(
                       icon: Icons.edit_rounded,
-                      label: 'Düzenle',
-                      color: const Color(0xFF3B82F6),
+                      label: 'Edit',
+                      color: const Color(0xFF0D9488),
                       onTap: event.isActive
                           ? () => Navigator.push(
                                 context,
@@ -298,7 +299,7 @@ class _EventManageCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     _ActionButton(
                       icon: Icons.visibility_off_rounded,
-                      label: 'Pasife Al',
+                      label: 'Deactivate',
                       color: AppColors.error,
                       onTap: event.isActive
                           ? () => _confirmDeactivate(context)

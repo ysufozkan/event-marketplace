@@ -77,6 +77,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   void _showTicketDialog(RegistrationModel reg) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -86,7 +88,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             Icon(Icons.check_circle_rounded,
                 color: AppColors.success, size: 28),
             SizedBox(width: 10),
-            Text('Kayıt Başarılı!'),
+            Text('Registration Successful!'),
           ],
         ),
         content: Column(
@@ -103,7 +105,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Bilet Kodun',
+              'Your Ticket Code',
               style:
                   TextStyle(fontSize: 12, color: AppColors.textSecondary),
             ),
@@ -112,24 +114,24 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               padding: const EdgeInsets.symmetric(
                   horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
+                color: primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.3)),
+                    color: primary.withValues(alpha: 0.3)),
               ),
               child: Text(
                 reg.ticketCode,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  color: primary,
                   letterSpacing: 4,
                 ),
               ),
             ),
             const SizedBox(height: 12),
             const Text(
-              'Bu kodu etkinlik girişinde göster',
+              'Show this code at the event entrance',
               style: TextStyle(
                   fontSize: 12, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
@@ -139,7 +141,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -149,13 +151,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final e = widget.event;
+    final primary = Theme.of(context).colorScheme.primary;
     final dateStr =
-        DateFormat('d MMMM yyyy, EEEE', 'tr_TR').format(e.date);
-    final timeStr = DateFormat('HH:mm', 'tr_TR').format(e.date);
+        DateFormat('d MMMM yyyy, EEEE', 'en_US').format(e.date);
+    final timeStr = DateFormat('HH:mm', 'en_US').format(e.date);
     final capacityPct =
         e.capacity > 0 ? e.registeredCount / e.capacity : 0.0;
 
     final isRegistered = _registration != null;
+    final auth = context.watch<AuthProvider>();
 
     return Scaffold(
       body: CustomScrollView(
@@ -181,11 +185,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 imageUrl: e.imageUrl,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
-                    color: AppColors.primary.withValues(alpha: 0.1)),
+                    color: primary.withValues(alpha: 0.1)),
                 errorWidget: (context, url, error) => Container(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  child: const Icon(Icons.image_outlined,
-                      color: AppColors.primary, size: 56),
+                  color: primary.withValues(alpha: 0.1),
+                  child: Icon(Icons.image_outlined,
+                      color: primary, size: 56),
                 ),
               ),
             ),
@@ -206,12 +210,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         decoration: BoxDecoration(
                           color: e.isFree
                               ? AppColors.success
-                              : AppColors.primary,
+                              : primary,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           e.isFree
-                              ? 'Ücretsiz'
+                              ? 'Free'
                               : '₺${e.price.toStringAsFixed(0)}',
                           style: const TextStyle(
                             color: Colors.white,
@@ -256,14 +260,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   _InfoCard(
                     icon: Icons.location_on_outlined,
                     title: e.location,
-                    subtitle: 'Etkinlik Yeri',
+                    subtitle: 'Venue',
                   ),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Katılım Durumu',
+                        'Attendance Status',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -271,7 +275,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         ),
                       ),
                       Text(
-                        '${e.registeredCount} / ${e.capacity} kişi',
+                        '${e.registeredCount} / ${e.capacity} people',
                         style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textSecondary),
@@ -286,16 +290,16 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       minHeight: 8,
                       backgroundColor: const Color(0xFFE5E7EB),
                       valueColor: AlwaysStoppedAnimation(
-                        e.isFull ? AppColors.error : AppColors.primary,
+                        e.isFull ? AppColors.error : primary,
                       ),
                     ),
                   ),
                   const SizedBox(height: 6),
                   e.isFull
-                      ? const Text('Kontenjan doldu',
+                      ? const Text('Capacity full',
                           style: TextStyle(
                               color: AppColors.error, fontSize: 12))
-                      : Text('${e.spotsLeft} yer kaldı',
+                      : Text('${e.spotsLeft} spots left',
                           style: const TextStyle(
                             color: AppColors.success,
                             fontSize: 12,
@@ -303,7 +307,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           )),
                   const SizedBox(height: 24),
                   const Text(
-                    'Etkinlik Hakkında',
+                    'About This Event',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -337,40 +341,65 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 offset: Offset(0, -4)),
           ],
         ),
-        child: _checkingRegistration
-            ? const Center(
-                child: SizedBox(
-                  height: 52,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                        color: AppColors.primary, strokeWidth: 2),
-                  ),
+        child: auth.isOrganizer
+            ? Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F4F6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD1D5DB)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded,
+                        color: AppColors.textSecondary, size: 20),
+                    SizedBox(width: 10),
+                    Text(
+                      'Organizers cannot register for events',
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary),
+                    ),
+                  ],
                 ),
               )
-            : isRegistered
-                ? _RegisteredBanner(ticketCode: _registration!.ticketCode)
-                : Consumer<RegistrationProvider>(
-                    builder: (context, reg, _) => ElevatedButton(
-                      onPressed:
-                          (e.isFull || reg.isLoading) ? null : _register,
-                      style: ElevatedButton.styleFrom(
-                        disabledBackgroundColor:
-                            const Color(0xFFD1D5DB),
-                        disabledForegroundColor:
-                            AppColors.textSecondary,
+            : _checkingRegistration
+                ? Center(
+                    child: SizedBox(
+                      height: 52,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                            color: primary, strokeWidth: 2),
                       ),
-                      child: reg.isLoading
-                          ? const SizedBox(
-                              height: 22,
-                              width: 22,
-                              child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2),
-                            )
-                          : Text(e.isFull
-                              ? 'Kontenjan Dolu'
-                              : 'Etkinliğe Kayıt Ol'),
                     ),
-                  ),
+                  )
+                : isRegistered
+                    ? _RegisteredBanner(
+                        ticketCode: _registration!.ticketCode)
+                    : Consumer<RegistrationProvider>(
+                        builder: (context, reg, _) => ElevatedButton(
+                          onPressed:
+                              (e.isFull || reg.isLoading) ? null : _register,
+                          style: ElevatedButton.styleFrom(
+                            disabledBackgroundColor:
+                                const Color(0xFFD1D5DB),
+                            disabledForegroundColor:
+                                AppColors.textSecondary,
+                          ),
+                          child: reg.isLoading
+                              ? const SizedBox(
+                                  height: 22,
+                                  width: 22,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2),
+                                )
+                              : Text(e.isFull
+                                  ? 'Sold Out'
+                                  : 'Register for Event'),
+                        ),
+                      ),
       ),
     );
   }
@@ -400,7 +429,7 @@ class _RegisteredBanner extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Kayıtlısınız',
+                'Registered',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColors.success,
@@ -408,7 +437,7 @@ class _RegisteredBanner extends StatelessWidget {
                 ),
               ),
               Text(
-                'Bilet kodu: $ticketCode',
+                'Ticket code: $ticketCode',
                 style: const TextStyle(
                     fontSize: 12, color: AppColors.textSecondary),
               ),
@@ -433,23 +462,24 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.05),
+        color: primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.1)),
+        border: Border.all(color: primary.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: AppColors.primary, size: 20),
+            child: Icon(icon, color: primary, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -482,36 +512,28 @@ class _CategoryBadge extends StatelessWidget {
   final String category;
   const _CategoryBadge({required this.category});
 
-  Color get _color {
-    switch (category) {
-      case 'Teknoloji':
-        return const Color(0xFF3B82F6);
-      case 'Müzik':
-        return const Color(0xFFEC4899);
-      case 'Spor':
-        return const Color(0xFF10B981);
-      case 'Sanat':
-        return const Color(0xFFF59E0B);
-      case 'Yemek':
-        return const Color(0xFFEF4444);
-      default:
-        return AppColors.primary;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final color = switch (category) {
+      'Technology' => const Color(0xFF0D9488),
+      'Music' => const Color(0xFFEC4899),
+      'Sports' => const Color(0xFF16A34A),
+      'Art' => const Color(0xFFF59E0B),
+      'Food' => const Color(0xFFEF4444),
+      _ => primary,
+    };
+
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _color.withValues(alpha: 0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         category,
         style: TextStyle(
-          color: _color,
+          color: color,
           fontSize: 13,
           fontWeight: FontWeight.w600,
         ),

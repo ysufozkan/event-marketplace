@@ -29,6 +29,8 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
       body: SafeArea(
@@ -38,7 +40,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
               child: Text(
-                'Biletlerim',
+                'My Tickets',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -49,7 +51,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: Text(
-                'Kayıt olduğun etkinlikler',
+                'Events you registered for',
                 style: TextStyle(
                     fontSize: 14, color: AppColors.textSecondary),
               ),
@@ -69,7 +71,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                                 size: 56, color: AppColors.error),
                             const SizedBox(height: 12),
                             const Text(
-                              'Biletler yüklenemedi',
+                              'Failed to load tickets',
                               style: TextStyle(
                                   color: AppColors.error,
                                   fontSize: 15,
@@ -90,37 +92,35 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                          color: AppColors.primary),
+                    return Center(
+                      child: CircularProgressIndicator(color: primary),
                     );
                   }
 
                   final tickets = snapshot.data ?? [];
 
                   if (tickets.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.confirmation_number_outlined,
                             size: 72,
-                            color: AppColors.textSecondary
-                                .withValues(alpha: 0.4),
+                            color: AppColors.textSecondary,
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Henüz biletiniz yok',
+                          SizedBox(height: 16),
+                          Text(
+                            'No tickets yet',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Etkinliklere katılmaya başla!',
+                          SizedBox(height: 8),
+                          Text(
+                            'Start attending events!',
                             style: TextStyle(
                               fontSize: 14,
                               color: AppColors.textSecondary,
@@ -155,9 +155,10 @@ class _TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = registration;
+    final primary = Theme.of(context).colorScheme.primary;
     final dateStr =
-        DateFormat('d MMM yyyy', 'tr_TR').format(r.eventDate);
-    final timeStr = DateFormat('HH:mm', 'tr_TR').format(r.eventDate);
+        DateFormat('d MMM yyyy', 'en_US').format(r.eventDate);
+    final timeStr = DateFormat('HH:mm', 'en_US').format(r.eventDate);
     final isPast = r.eventDate.isBefore(DateTime.now());
 
     return Container(
@@ -190,13 +191,13 @@ class _TicketCard extends StatelessWidget {
                   colorBlendMode: isPast ? BlendMode.darken : null,
                   placeholder: (context, url) => Container(
                     height: 110,
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: primary.withValues(alpha: 0.1),
                   ),
                   errorWidget: (context, url, error) => Container(
                     height: 110,
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    child: const Icon(Icons.image_outlined,
-                        color: AppColors.primary, size: 36),
+                    color: primary.withValues(alpha: 0.1),
+                    child: Icon(Icons.image_outlined,
+                        color: primary, size: 36),
                   ),
                 ),
               ),
@@ -213,7 +214,7 @@ class _TicketCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    isPast ? 'Geçti' : 'Aktif',
+                    isPast ? 'Past' : 'Active',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,
@@ -260,22 +261,21 @@ class _TicketCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.06),
+                    color: primary.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                        color:
-                            AppColors.primary.withValues(alpha: 0.2)),
+                        color: primary.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.qr_code_rounded,
-                          color: AppColors.primary, size: 28),
+                      Icon(Icons.qr_code_rounded,
+                          color: primary, size: 28),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Bilet Kodu',
+                            'Ticket Code',
                             style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary,
@@ -283,10 +283,10 @@ class _TicketCard extends StatelessWidget {
                           ),
                           Text(
                             r.ticketCode,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                              color: primary,
                               letterSpacing: 3,
                             ),
                           ),
@@ -299,22 +299,22 @@ class _TicketCard extends StatelessWidget {
                               ClipboardData(text: r.ticketCode));
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Bilet kodu kopyalandı'),
+                              content: Text('Ticket code copied'),
                               behavior: SnackBarBehavior.floating,
                               duration: Duration(seconds: 2),
                             ),
                           );
                         },
-                        icon: const Icon(Icons.copy_rounded,
-                            color: AppColors.primary, size: 20),
-                        tooltip: 'Kopyala',
+                        icon: Icon(Icons.copy_rounded,
+                            color: primary, size: 20),
+                        tooltip: 'Copy',
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Kayıt tarihi: ${DateFormat('d MMM yyyy, HH:mm', 'tr_TR').format(r.purchasedAt)}',
+                  'Registered on: ${DateFormat('d MMM yyyy, HH:mm', 'en_US').format(r.purchasedAt)}',
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.textSecondary,

@@ -11,7 +11,6 @@ class RegistrationService {
     required String userName,
     required EventModel event,
   }) async {
-    // Çift kayıt kontrolü
     final existing = await _db
         .collection('registrations')
         .where('userId', isEqualTo: userId)
@@ -23,11 +22,10 @@ class RegistrationService {
       final existingReg = RegistrationModel.fromMap(
           existing.docs.first.data(), existing.docs.first.id);
       if (existingReg.isConfirmed) {
-        throw Exception('Bu etkinliğe zaten kayıtlısınız');
+        throw Exception('You are already registered for this event');
       }
     }
 
-    // Kapasite kontrolü
     final eventSnap =
         await _db.collection('events').doc(event.id).get();
     final data = eventSnap.data()!;
@@ -35,10 +33,9 @@ class RegistrationService {
     final capacity = data['capacity'] as int;
 
     if (registeredCount >= capacity) {
-      throw Exception('Etkinlik kapasitesi doldu');
+      throw Exception('This event is at full capacity');
     }
 
-    // Kayıt oluştur
     final ticketCode =
         const Uuid().v4().replaceAll('-', '').substring(0, 8).toUpperCase();
     final now = DateTime.now();

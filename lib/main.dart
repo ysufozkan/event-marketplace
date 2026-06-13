@@ -17,7 +17,7 @@ import 'screens/staff/ticket_validator_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await initializeDateFormatting('tr_TR', null);
+  await initializeDateFormatting('en_US', null);
   await _seedStaffUser();
   runApp(const MyApp());
 }
@@ -41,7 +41,7 @@ Future<void> _seedStaffUser() async {
 
     await db.collection('users').doc(credential.user!.uid).set({
       'uid': credential.user!.uid,
-      'name': 'Kapı Görevlisi',
+      'name': 'Door Attendant',
       'email': 'kapici@eventhub.com',
       'role': 'staff',
       'avatarUrl': null,
@@ -50,7 +50,7 @@ Future<void> _seedStaffUser() async {
 
     await auth.signOut();
   } catch (_) {
-    // Hesap zaten varsa veya başka bir hata → sessizce geç
+    // Account already exists or another error — silently ignore
   }
 }
 
@@ -64,18 +64,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => RegistrationProvider()),
       ],
-      child: MaterialApp(
-        title: 'EventHub',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        initialRoute: '/',
-        routes: {
-          '/': (_) => const SplashScreen(),
-          '/login': (_) => const LoginScreen(),
-          '/register': (_) => const RegisterScreen(),
-          '/home': (_) => const HomeScreen(),
-          '/staff': (_) => const TicketValidatorScreen(),
-        },
+      child: Consumer<AuthProvider>(
+        builder: (_, auth, _) => MaterialApp(
+          title: 'EventHub',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.forRole(auth.user?.role),
+          initialRoute: '/',
+          routes: {
+            '/': (_) => const SplashScreen(),
+            '/login': (_) => const LoginScreen(),
+            '/register': (_) => const RegisterScreen(),
+            '/home': (_) => const HomeScreen(),
+            '/staff': (_) => const TicketValidatorScreen(),
+          },
+        ),
       ),
     );
   }
